@@ -1,3 +1,5 @@
+#![no_std]
+
 use core::cell::UnsafeCell;
 
 pub struct Mutex {
