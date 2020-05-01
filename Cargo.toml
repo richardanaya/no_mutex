@@ -1,0 +1,15 @@
+[package]
+name = "no_mutex"
+version = "0.0.0"
+authors = ["Richard Mutex"]
+edition = "2018"
+description = "A lean no_std mutex for single threaded environments"
+license = "MIT OR Apache-2.0"
+categories = ["no-std"]
+repository = "https://github.com/richardanaya/no_mutex"
+readme="README.md"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
