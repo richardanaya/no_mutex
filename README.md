@@ -1,5 +1,7 @@
 # no_mutex
 
+** this only works on nightly **
+
 A mutex like construct for single threaded applications. 
 
 * Gives you Sync and Send container
