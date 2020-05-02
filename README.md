@@ -4,6 +4,7 @@
 
 A mutex like construct for single threaded applications. 
 
+* Only requires `no_std`
 * Gives you Sync and Send container
 * Lazily loads the mutex value with `Default`
 * panics if you lock it twice since deadlocking a single threaded app would be pointless
