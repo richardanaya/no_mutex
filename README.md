@@ -2,7 +2,7 @@
 
 **this only works on nightly**
 
-A mutex like construct for single threaded applications. 
+A mutex like singleton construct for single threaded applications. 
 
 * Only requires `no_std`
 * Gives you Sync and Send container
