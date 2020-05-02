@@ -1,6 +1,6 @@
 # no_mutex
 
-** this only works on nightly **
+**this only works on nightly**
 
 A mutex like construct for single threaded applications. 
 
