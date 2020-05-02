@@ -1,5 +1,29 @@
 # no_mutex
 
-A `no_std` mutex (does not even require `alloc`) for strict single threaded environments.
+A mutex like construct for single threaded applications. 
 
-This mutex is an extraction of the [Rust web assembly mutex](https://raw.githubusercontent.com/rust-lang/rust/master/src/libstd/sys/wasm/mutex.rs) ( made for an environment without threads ). This library exists to help a user avoid including the standard library.  License ownership is of the Rust team.
+* Gives you Sync and Send container
+* Lazily loads the mutex value with `Default`
+* panics if you lock it twice since deadlocking a single threaded app would be pointless
+
+```rust
+use no_mutex::Mutex;
+
+static FOO: Mutex<Foo> = Mutex::default();
+
+#[derive(Debug)]
+struct Foo {
+    i:u32
+}
+
+impl Default for Foo {
+    fn default() -> Self {
+        Foo { i: 42 }
+    }
+}
+
+fn main() {
+    let r = FOO.lock();
+    println!("{:?}",r);
+}
+```

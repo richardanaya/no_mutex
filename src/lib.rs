@@ -1,68 +1,30 @@
 #![no_std]
-
+#![feature(const_fn)]
 use core::cell::UnsafeCell;
+use core::cell::RefCell;
 
-pub struct Mutex {
-    locked: UnsafeCell<bool>,
+pub struct Mutex<T> where T:Sync+Send+Default+Sized{
+    instance: UnsafeCell<Option<RefCell<T>>>
 }
 
-unsafe impl Send for Mutex {}
-unsafe impl Sync for Mutex {} // no threads on wasm
+unsafe impl<T:Sync+Send+Default> Send for Mutex<T> {}
 
-impl Mutex {
-    pub const fn new() -> Mutex {
-        Mutex { locked: UnsafeCell::new(false) }
-    }
+unsafe impl<T:Sync+Send+Default> Sync for Mutex<T> {}
 
-    #[inline]
-    pub unsafe fn init(&mut self) {}
-
-    #[inline]
-    pub unsafe fn lock(&self) {
-        let locked = self.locked.get();
-        assert!(!*locked, "cannot recursively acquire mutex");
-        *locked = true;
-    }
-
-    #[inline]
-    pub unsafe fn unlock(&self) {
-        *self.locked.get() = false;
-    }
-
-    #[inline]
-    pub unsafe fn try_lock(&self) -> bool {
-        let locked = self.locked.get();
-        if *locked {
-            false
-        } else {
-            *locked = true;
-            true
+impl<T:Sync+Send+Default+Sized> Mutex<T>{
+    pub const fn default() -> Self {
+        Mutex {
+            instance: UnsafeCell::new(None)
         }
     }
-
-    #[inline]
-    pub unsafe fn destroy(&self) {}
-}
-
-// All empty stubs because wasm has no threads yet, so lock acquisition always
-// succeeds.
-pub struct ReentrantMutex {}
-
-impl ReentrantMutex {
-    pub const unsafe fn uninitialized() -> ReentrantMutex {
-        ReentrantMutex {}
+    
+    pub fn lock(&self) -> core::cell::RefMut<'_, T> {
+        unsafe {
+            let instance = self.instance.get();
+            if (*instance).is_none() {
+                *instance = Some(RefCell::new(T::default()));
+            }
+            (*instance).as_ref().unwrap().borrow_mut()
+        }
     }
-
-    pub unsafe fn init(&self) {}
-
-    pub unsafe fn lock(&self) {}
-
-    #[inline]
-    pub unsafe fn try_lock(&self) -> bool {
-        true
-    }
-
-    pub unsafe fn unlock(&self) {}
-
-    pub unsafe fn destroy(&self) {}
 }
